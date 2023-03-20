@@ -4,13 +4,10 @@ Hızlı bir şekilde tüm portları tarayıp hangi hizmetin çalıştığını v
 KURULUMU:
 
 ```
-pip install python-nmap
-```
-```
 git clone https://github.com/scyie8/Python-Port-Scanner.git
 ```
 ```
-cd Python-Port-Scanner
+cd Port-Scanner
 ```
 ```
 chmod +x Tarama.py
@@ -19,7 +16,7 @@ chmod +x Tarama.py
 KULLANIMI:
 
 
-```./Tarama.py```
+```python Tarama.py```
 
 
 Ardından hedef ip adresini yazıp beklemeye başlıyoruz.
