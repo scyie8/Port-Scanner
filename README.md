@@ -12,6 +12,9 @@ git clone https://github.com/scyie8/Python-Port-Scanner.git
 ```
 cd Python-Port-Scanner
 ```
+```
+chmod +x Tarama.py
+```
 
 KULLANIMI:
 
