@@ -1,38 +1,19 @@
 import socket
-import multiprocessing.pool
 
-# Hedef IP adresi ve taramak istediğimiz port aralığı
-target_ip = input("Hedef IP adresi: ")
-start_port = 1
-end_port = 65535
+host = input("Hedef IP adresi: ")  # kullanıcıdan IP adresi alınır
 
-# Tarama fonksiyonu
-def scan_port(ip, port):
+for port in range(1, 65536):
     try:
-        # Soket oluşturma
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Bağlantıyı zaman aşımına uğrat
-        s.settimeout(0.5)
-        # Portu tara
-        result = s.connect_ex((ip, port))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.1)
+        result = sock.connect_ex((host, port))  # bağlantıyı dene
         if result == 0:
-            # Hizmet adını ve versiyon bilgisini alma
-            service = socket.getservbyport(port)
-            banner = ""
-            s.send(b"GET / HTTP/1.0\r\n\r\n")
-            banner = s.recv(1024)
-            print("Port {} açık: Hizmet={}, Versiyon={}".format(port, service, banner.decode().strip()))
-        # Soketi kapat
-        s.close()
+            try:
+                banner = sock.recv(1024).decode().strip()  # banner mesajını al
+            except:
+                banner = "Bilinmeyen servis"
+            print(f"Port {port}:\tAçık\t\tServis: {socket.getservbyport(port)}\tVersiyon: {banner}")
     except:
         pass
-
-# Tüm portları tara
-pool = multiprocessing.pool.ThreadPool(processes=500)
-for port in range(start_port, end_port+1):
-    pool.apply_async(scan_port, args=(target_ip, port))
-pool.close()
-pool.join()
-
 
 #PenzPyhm && Scy-ie8
