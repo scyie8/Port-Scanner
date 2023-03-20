@@ -4,7 +4,7 @@ Hızlı bir şekilde tüm portları tarayıp hangi hizmetin çalıştığını v
 KURULUMU:
 
 ```
-git clone https://github.com/scyie8/Python-Port-Scanner.git
+git clone https://github.com/scyie8/Port-Scanner.git
 ```
 ```
 cd Port-Scanner
