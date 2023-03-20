@@ -1,38 +1,35 @@
-import asyncio
-import nmap
+import socket
+import multiprocessing.pool
 
-# Hedef IP adresi
+# Hedef IP adresi ve taramak istediğimiz port aralığı
 target_ip = input("Hedef IP adresi: ")
-
-# Tüm portları tarayacak şekilde aralığı belirleyin
 start_port = 1
 end_port = 65535
 
-# Nmap taraması yapmak için nmap modülünü kullanın
-nm = nmap.PortScanner()
-
-# Asenkron fonksiyon oluşturun
-async def scan_port(port):
-    # Belirtilen portu tara
-    result = nm.scan(target_ip, str(port), arguments='-sV')['scan']
-    # Tarama sonucundan hizmet ve versiyon bilgilerini alın
+# Tarama fonksiyonu
+def scan_port(ip, port):
     try:
-        service = result[target_ip]['tcp'][port]['name']
-        version = result[target_ip]['tcp'][port]['version']
+        # Soket oluşturma
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Bağlantıyı zaman aşımına uğrat
+        s.settimeout(0.5)
+        # Portu tara
+        result = s.connect_ex((ip, port))
+        if result == 0:
+            # Hizmet adını ve versiyon bilgisini alma
+            service = socket.getservbyport(port)
+            banner = ""
+            s.send(b"GET / HTTP/1.0\r\n\r\n")
+            banner = s.recv(1024)
+            print("Port {} açık: Hizmet={}, Versiyon={}".format(port, service, banner.decode().strip()))
+        # Soketi kapat
+        s.close()
     except:
-        service = "Bilinmiyor"
-        version = "Bilinmiyor"
-    # Bilgileri ekrana yazdır
-    print("Port {}: {} ({})".format(port, service, version))
+        pass
 
-async def main():
-    tasks = []
-    # Tüm portları tarayın
-    for port in range(start_port, end_port+1):
-        tasks.append(asyncio.ensure_future(scan_port(port)))
-    # Tüm görevleri asenkron olarak çalıştırın
-    await asyncio.gather(*tasks)
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+# Tüm portları tara
+pool = multiprocessing.pool.ThreadPool(processes=500)
+for port in range(start_port, end_port+1):
+    pool.apply_async(scan_port, args=(target_ip, port))
+pool.close()
+pool.join()
