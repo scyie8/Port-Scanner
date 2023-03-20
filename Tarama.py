@@ -33,3 +33,6 @@ for port in range(start_port, end_port+1):
     pool.apply_async(scan_port, args=(target_ip, port))
 pool.close()
 pool.join()
+
+
+#PenzPyhm && Scy-ie8
