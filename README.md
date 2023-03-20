@@ -16,7 +16,7 @@ chmod +x Tarama.py
 KULLANIMI:
 
 
-```python Tarama.py```
+```python3 Tarama.py```
 
 
 Ardından hedef ip adresini yazıp beklemeye başlıyoruz.
